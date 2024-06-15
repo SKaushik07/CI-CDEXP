@@ -4,7 +4,7 @@ pipeline {
         DOCKER_IMAGE = 'hixej84931fna6/nodejs_exp:latest'
         registryCredential = credentials('docker-hub-config')
         // KUBECONFIG = '/home/xs309-shusai/Downloads/sahil-config'
-        KUBECONFIG = credentials('kubeconfig-credential')
+        KUBECONFIG = credentials('kube-config-id')
 
     }
     stages {
