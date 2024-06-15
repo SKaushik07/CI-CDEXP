@@ -117,7 +117,7 @@ pipeline {
     stage('Building Image') {
       steps{
         script {
-          sh 'sudo chmod +x script.sh'
+          sh 'chmod +x script.sh'
           sh './script.sh'
           sh 'docker build -t hixej84931fna6/nodejs_exp:latest .'
         }
