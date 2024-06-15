@@ -33,8 +33,9 @@ pipeline {
         }
         stage('Deploy to Kubernetes') {
             steps {
-                withCredentials([file(credentialsId: 'kube-config-id', variable: 'KUBECONFIG')]) {
+                withCredentials([file(credentialsId: 'kubeconfig-credential', variable: 'KUBECONFIG')]) {
                     sh """
+                    export KUBECONFIG=$KUBECONFIG
                     kubectl apply -f ./deployment.yaml --namespace nodejs-exp --validate=false
                     """
                 }
