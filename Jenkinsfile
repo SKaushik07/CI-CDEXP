@@ -37,7 +37,7 @@ pipeline {
                     sh """
                     export KUBECONFIG=$KUBECONFIG
                     kubectl apply -f ./deployment.yaml --namespace nodejs-exp --validate=false
-                    kubectl get svc
+                    kubectl get svc --namespace nodejs-exp
                     """
                 }
             }
