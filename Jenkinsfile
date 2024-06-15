@@ -2,9 +2,9 @@ pipeline {
     agent any
     
     environment {
-        DOCKER_HUB_CREDENTIALS = credentials('hixej84931fna6') // Jenkins credentials ID for Docker Hub
+        DOCKER_HUB_CREDENTIALS = credentials('hixej84931fna6')
         // KUBE_CONFIG = credentials('kube-config-id') // Uncomment if you need Kubernetes credentials
-        IMAGE_TAG = "latest" // You can use a dynamic tag based on git commit hash, etc.
+        IMAGE_TAG = "latest" 
     }
     
     stages {
@@ -15,6 +15,7 @@ pipeline {
                 
                 // Install Node.js dependencies
                 sh 'npm install'
+                sh 'echo "npm install"'
             }
         }
         
@@ -23,7 +24,8 @@ pipeline {
                 script {
                     // Build Docker image using Dockerfile in your project
                     docker.build("hixej84931fna6/nodejs_exp:${IMAGE_TAG}")
-                    
+                    sh 'echo "npm install"'
+
                     // Authenticate with Docker Hub
                     withCredentials([[$class: 'UsernamePasswordMultiBinding', credentialsId: 'DOCKER_HUB_CREDENTIALS', usernameVariable: 'DOCKER_USERNAME', passwordVariable: 'DOCKER_PASSWORD']]) {
                         docker.withRegistry('https://hub.docker.com', 'DOCKER_HUB_CREDENTIALS') {
