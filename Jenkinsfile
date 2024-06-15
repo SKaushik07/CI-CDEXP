@@ -99,47 +99,98 @@
 
 
 
-pipeline {
-    agent any
+// pipeline {
+//     agent any
 
-    environment {
-        imagename = "hixej84931fna6/nodejs_exp"
-        dockerImage = ""
-        registryCredential = credentials('docker-hub-config')
-    }
+//     environment {
+//         imagename = "hixej84931fna6/nodejs_exp"
+//         dockerImage = ""
+//         registryCredential = credentials('docker-hub-config')
+//     }
 
-  stages {
-    stage('Cloning Repo') {
-      steps {
-        git branch:'main',url: 'https://github.com/SKaushik07/CI-CDEXP.git'
-      }
-    }
-    stage('Building Image') {
-      steps{
-        script {
-          chmod +x script.sh
-          ./script.sh
-          docker build -t hixej84931fna6/nodejs_exp:latest .
-        }
-      }
-    }
-    stage('Pushing Image') {
-      steps{
-        script {
-          docker.withRegistry( '', registryCredential ) {
-            dockerImage.push("latest")
-          }
-        }
-      }
-    }
+//   stages {
+//     stage('Cloning Repo') {
+//       steps {
+//         git branch:'main',url: 'https://github.com/SKaushik07/CI-CDEXP.git'
+//       }
+//     }
+//     stage('Building Image') {
+//       steps{
+//         script {
+//           sh 'chmod +x script.sh'
+//           sh './script.sh'
+//           sh 'docker build -t hixej84931fna6/nodejs_exp:latest .'
+//         }
+//       }
+//     }
+//     stage('Pushing Image') {
+//       steps{
+//         script {
+//           docker.withRegistry( '', registryCredential ) {
+//             dockerImage.push("latest")
+//           }
+//         }
+//       }
+//     }
     
-    // post {
-    //     success {
-    //         echo 'Pipeline successfully completed!'
-    //     }
-    //     failure {
-    //         echo 'Pipeline failed :('
-    //     }
-    // }
-}
+//     // post {
+//     //     success {
+//     //         echo 'Pipeline successfully completed!'
+//     //     }
+//     //     failure {
+//     //         echo 'Pipeline failed :('
+//     //     }
+//     // }
+// }
+// }
+
+
+///////////////////
+
+
+
+pipeline {
+    agent {
+        label 'macOS'  
+    }
+    environment {
+        DOCKER_IMAGE = 'hixej84931fna6/nodejs_exp:latest'  // Update with your Docker image name
+    }
+    stages {
+        stage('Checkout') {
+            steps {
+                checkout scm
+            }
+        }
+        stage('Build Docker Image') {
+            steps {
+                script {
+                    def dockerImage = docker.build("${DOCKER_IMAGE}")
+                    dockerImage.inside {
+                        sh 'npm install'  
+                    }
+                }
+            }
+        }
+        stage('Run Tests') {
+            steps {
+                script {
+                    def dockerImage = docker.image("${DOCKER_IMAGE}")
+                    dockerImage.inside {
+                        sh 'npm test'  // Example command to run tests inside the Docker container
+                    }
+                }
+            }
+        }
+        stage('Push Docker Image') {
+            steps {
+                script {
+                    docker.withRegistry('https://registry.example.com', 'docker-hub-config') {
+                        def dockerImage = docker.image("${DOCKER_IMAGE}")
+                        dockerImage.push()
+                    }
+                }
+            }
+        }
+    }
 }
