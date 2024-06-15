@@ -37,6 +37,7 @@ pipeline {
                 script {
                     sh """
                     export KUBECONFIG=$KUBECONFIG
+                    kubectl create ns nodejs-exp
                     kubectl apply -f ./deployment.yaml --namespace nodejs-exp --validate=false
                     """
                 }
