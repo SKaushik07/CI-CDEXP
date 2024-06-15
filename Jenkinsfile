@@ -179,7 +179,8 @@
 pipeline {
     agent any
     environment {
-        DOCKER_IMAGE = 'hixej84931fna6/nodejs_exp:latest' 
+        DOCKER_IMAGE = 'hixej84931fna6/nodejs_exp:latest'
+        registryCredential = credentials('docker-hub-config')
     }
     stages {
         stage('Checkout') {
@@ -209,7 +210,7 @@ pipeline {
             steps {
                 script {
                     def dockerCmd = isUnix() ? 'docker' : 'docker.exe'
-                    docker.withRegistry('https://registry.example.com', 'docker-hub-config') {
+                    docker.withRegistry('https://hub.docker.com', 'registryCredential') {
                         def dockerImage = docker.image("${DOCKER_IMAGE}")
                         dockerImage.push()
                     }
