@@ -119,7 +119,7 @@ pipeline {
     stage('Building Image') {
       steps{
         script {
-          dockerImage = docker.build imagename
+          sh 'docker build -t node:20.11.1-alpine3.19 .'
         }
       }
     }
