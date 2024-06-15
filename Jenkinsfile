@@ -144,77 +144,77 @@
 // }
 // }
 
+//////////
 
-///////////////////
 
 // pipeline {
 //     agent any
-//     tools {
-//         nodejs 'node-8.1.3'
+//     environment {
+//         registryCredential = credentials('hixej84931fna6')
 //     }
+
 //     stages {
-//         stage('Build') {
+//         stage('Checkout') {
 //             steps {
-//                 sh 'nodejs --version'
-//                 sh 'npm install'
-//                 sh 'gulp lint'
+//                 checkout scm
 //             }
 //         }
-//         stage('Test') {
+//         stage('Build and Publish') {
 //             steps {
-//                 sh 'nodejs --version'
-//                 sh 'gulp test'
+//                 script {
+//                     // Build and push Docker image
+//                     docker.withRegistry('', registryCredential) {
+//                         def image = docker.build("hixej84931fna6/nodejs_exp")
+//                         image.push()
+//                     }
+//                 }
 //             }
 //         }
 //     }
-//     post {
-//         always {
-//             echo 'One way or another, I have finished'
-//             deleteDir() 
-//         }
-//         success {
-//             echo 'I succeeeded!'
-//         }
-//         unstable {
-//             echo 'I am unstable :/'
-//         }
-//         failure {
-//             echo 'I failed :('
-//         }
-//         changed {
-//             echo 'Things were different before...'
-//         }
-//     }
+   
 // }
 
-
-//////////
 
 
 pipeline {
     agent any
     environment {
-        registryCredential = credentials('hixej84931fna6')
+        DOCKER_IMAGE = 'hixej84931fna6/nodejs_exp:latest' 
     }
-
     stages {
         stage('Checkout') {
             steps {
                 checkout scm
             }
         }
-        stage('Build and Publish') {
+        stage('Build Docker Image') {
             steps {
                 script {
-                    // Build and push Docker image
-                    docker.withRegistry('', registryCredential) {
-                        def image = docker.build("hixej84931fna6/nodejs_exp")
-                        image.push()
+                    def dockerCmd = isUnix() ? 'docker' : 'docker.exe'
+                    sh "${dockerCmd} build -t ${DOCKER_IMAGE} ."
+                }
+            }
+        }
+        // stage('Run Tests') {
+        //     steps {
+        //         script {
+        //             def dockerImage = docker.image("${DOCKER_IMAGE}")
+        //             dockerImage.inside {
+        //                 sh 'npm test' 
+        //             }
+        //         }
+        //     }
+        // }
+        stage('Push Docker Image') {
+            steps {
+                script {
+                    def dockerCmd = isUnix() ? 'docker' : 'docker.exe'
+                    docker.withRegistry('https://registry.example.com', 'docker-hub-config') {
+                        def dockerImage = docker.image("${DOCKER_IMAGE}")
+                        dockerImage.push()
                     }
                 }
             }
         }
     }
-   
 }
-
