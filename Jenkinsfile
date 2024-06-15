@@ -100,7 +100,9 @@
 
 
 pipeline {
-    agent any
+    agent {
+        docker { image 'node:20.11.1-alpine3.19' }
+    }
 
     environment {
         imagename = "hixej84931fna6/nodejs_exp"
