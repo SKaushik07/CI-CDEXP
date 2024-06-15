@@ -117,7 +117,7 @@ pipeline {
     stage('Building Image') {
       steps{
         script {
-          sh 'docker build -t node:20.11.1-alpine3.19 .'
+          sh 'docker build -t hixej84931fna6/nodejs_exp:latest .'
         }
       }
     }
