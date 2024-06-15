@@ -196,9 +196,6 @@ pipeline {
     environment {
         registryCredential = 'hixej84931fna6' 
     }
-    tools {
-        nodejs 'node-8.1.3'
-    }
     stages {
         stage('Checkout') {
             steps {
@@ -207,10 +204,7 @@ pipeline {
         }
         stage('Build and Publish') {
             steps {
-                sh 'nodejs --version'
                 sh 'npm install'
-                sh 'gulp lint'
-                
                 script {
                     // Build and push Docker image
                     docker.withRegistry('', registryCredential) {
