@@ -1,0 +1,33 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: nodejs-app
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: nodejs
+  template:
+    metadata:
+      labels:
+        app: nodejs
+    spec:
+      containers:
+        - name: nodejs
+          image: hixej84931fna6/nodejs_exp:latest
+          ports:
+            - containerPort: 3000  # Adjust the port if your Node.js app listens on a different port
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: nodejs-service
+spec:
+  type: NodePort
+  selector:
+    app: nodejs
+  ports:
+    - port: 3000  # The port that the service should listen on
+      targetPort: 3000  # The port on the pod that the service should direct traffic to
+      nodePort: 30080  # The port on the node that will be exposed externally
