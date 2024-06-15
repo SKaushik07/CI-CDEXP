@@ -196,9 +196,7 @@ pipeline {
     environment {
         registryCredential = credentials('hixej84931fna6')
     }
-    tools {
-        nodejs 'NodeJS'
-    }
+
     stages {
         stage('Checkout') {
             steps {
@@ -207,7 +205,6 @@ pipeline {
         }
         stage('Build and Publish') {
             steps {
-                sh 'npm install'
                 script {
                     // Build and push Docker image
                     docker.withRegistry('', registryCredential) {
@@ -218,23 +215,6 @@ pipeline {
             }
         }
     }
-    post {
-        always {
-            echo 'One way or another, I have finished'
-            deleteDir() /* clean up our workspace */
-        }
-        success {
-            echo 'Build and push succeeded!'
-        }
-        unstable {
-            echo 'Build or push was unstable :/'
-        }
-        failure {
-            echo 'Build or push failed :('
-        }
-        changed {
-            echo 'Things were different before...'
-        }
-    }
+   
 }
 
