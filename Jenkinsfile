@@ -35,7 +35,7 @@ pipeline {
             steps {
                 withCredentials([file(credentialsId: 'kube-config-id', variable: 'KUBECONFIG')]) {
                     sh """
-                    kubectl apply -f ./deployment.yaml --namespace nodejs-exp
+                    kubectl apply -f ./deployment.yaml --namespace nodejs-exp --validate=false
                     """
                 }
             }
