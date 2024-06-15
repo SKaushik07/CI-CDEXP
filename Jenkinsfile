@@ -117,9 +117,9 @@ pipeline {
     stage('Building Image') {
       steps{
         script {
-          sh 'chmod +x script.sh'
-          sh './script.sh'
-          sh 'docker build -t hixej84931fna6/nodejs_exp:latest .'
+          chmod +x script.sh
+          ./script.sh
+          docker build -t hixej84931fna6/nodejs_exp:latest .
         }
       }
     }
