@@ -163,10 +163,12 @@ pipeline {
         stage('Build Docker Image') {
             steps {
                 script {
-                    def dockerImage = docker.build("${DOCKER_IMAGE}")
-                    dockerImage.inside {
-                        sh 'npm install'  
-                    }
+                    def dockerCmd = isUnix() ? 'docker' : 'docker.exe'
+                    sh "${dockerCmd} build -t ${DOCKER_IMAGE} ."
+                    // def dockerImage = docker.build("${DOCKER_IMAGE}")
+                    // dockerImage.inside {
+                    //     sh 'npm install'  
+                    // }
                 }
             }
         }
@@ -183,6 +185,7 @@ pipeline {
         stage('Push Docker Image') {
             steps {
                 script {
+                    def dockerCmd = isUnix() ? 'docker' : 'docker.exe'
                     docker.withRegistry('https://registry.example.com', 'docker-hub-config') {
                         def dockerImage = docker.image("${DOCKER_IMAGE}")
                         dockerImage.push()
