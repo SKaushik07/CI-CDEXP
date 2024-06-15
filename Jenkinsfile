@@ -194,7 +194,10 @@
 pipeline {
     agent any
     environment {
-        registryCredential = 'hixej84931fna6' 
+        registryCredential = credentials('hixej84931fna6')
+    }
+    tools {
+        nodejs 'NodeJS'
     }
     stages {
         stage('Checkout') {
