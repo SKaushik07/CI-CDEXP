@@ -3,7 +3,7 @@ pipeline {
     environment {
         DOCKER_IMAGE = 'hixej84931fna6/nodejs_exp:latest'
         registryCredential = credentials('docker-hub-config')
-        KUBECONFIG = '/home/xs309-shusai/Downloads/sahil-config'
+        // KUBECONFIG = '/home/xs309-shusai/Downloads/sahil-config'
 
     }
     stages {
@@ -35,7 +35,6 @@ pipeline {
             steps {
                 withCredentials([file(credentialsId: 'kube-config-id', variable: 'KUBECONFIG')]) {
                     sh """
-                    export KUBECONFIG=$KUBECONFIG
                     kubectl apply -f ./deployment.yaml --namespace nodejs-exp
                     """
                 }
