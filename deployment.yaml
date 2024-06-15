@@ -30,4 +30,3 @@ spec:
   ports:
     - port: 3000  # The port that the service should listen on
       targetPort: 3000  # The port on the pod that the service should direct traffic to
-      nodePort: 30080  # The port on the node that will be exposed externally
