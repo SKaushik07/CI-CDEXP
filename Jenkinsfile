@@ -47,6 +47,7 @@ pipeline {
 
     environment {
         IMAGE_TAG = "latest"
+        DOCKER_HUB_CREDENTIALS = credentials('docker-hub-config') // Jenkins credentials ID for Docker Hub
     }
 
     stages {
@@ -61,7 +62,7 @@ pipeline {
                 git 'https://github.com/SKaushik07/CI-CDEXP.git'
                 sh 'npm install'
                 // Build Docker image
-                docker.withRegistry('https://hub.docker.com', 'docker-hub-config') {
+                docker.withRegistry('https://hub.docker.com', 'DOCKER_HUB_CREDENTIALS') {
                     docker.build("hixej84931fna6/nodejs_exp:${IMAGE_TAG}")
                 }
             }
@@ -80,7 +81,7 @@ pipeline {
             steps {
                 script {
                     // Push Docker image to Docker Hub
-                    docker.withRegistry('https://hub.docker.com', 'docker-hub-config') {
+                    docker.withRegistry('https://hub.docker.com', 'DOCKER_HUB_CREDENTIALS') {
                         docker.image("hixej84931fna6/nodejs_exp:${IMAGE_TAG}").push()
                     }
                 }
