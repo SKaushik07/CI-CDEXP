@@ -109,11 +109,11 @@
 //     }
 
 //   stages {
-//     stage('Cloning Repo') {
-//       steps {
-//         git branch:'main',url: 'https://github.com/SKaushik07/CI-CDEXP.git'
-//       }
-//     }
+    // stage('Cloning Repo') {
+    //   steps {
+    //     git branch:'main',url: 'https://github.com/SKaushik07/CI-CDEXP.git'
+    //   }
+    // }
 //     stage('Building Image') {
 //       steps{
 //         script {
@@ -147,12 +147,57 @@
 
 ///////////////////
 
+// pipeline {
+//     agent any
+//     tools {
+//         nodejs 'node-8.1.3'
+//     }
+//     stages {
+//         stage('Build') {
+//             steps {
+//                 sh 'nodejs --version'
+//                 sh 'npm install'
+//                 sh 'gulp lint'
+//             }
+//         }
+//         stage('Test') {
+//             steps {
+//                 sh 'nodejs --version'
+//                 sh 'gulp test'
+//             }
+//         }
+//     }
+//     post {
+//         always {
+//             echo 'One way or another, I have finished'
+//             deleteDir() 
+//         }
+//         success {
+//             echo 'I succeeeded!'
+//         }
+//         unstable {
+//             echo 'I am unstable :/'
+//         }
+//         failure {
+//             echo 'I failed :('
+//         }
+//         changed {
+//             echo 'Things were different before...'
+//         }
+//     }
+// }
+
+
+//////////
 
 
 pipeline {
     agent any
     environment {
-        DOCKER_IMAGE = 'hixej84931fna6/nodejs_exp:latest'  // Update with your Docker image name
+        registryCredential = 'hixej84931fna6' 
+    }
+    tools {
+        nodejs 'node-8.1.3'
     }
     stages {
         stage('Checkout') {
@@ -160,38 +205,39 @@ pipeline {
                 checkout scm
             }
         }
-        stage('Build Docker Image') {
+        stage('Build and Publish') {
             steps {
+                sh 'nodejs --version'
+                sh 'npm install'
+                sh 'gulp lint'
+                
                 script {
-                    def dockerCmd = isUnix() ? 'docker' : 'docker.exe'
-                    sh "${dockerCmd} build -t ${DOCKER_IMAGE} ."
-                    // def dockerImage = docker.build("${DOCKER_IMAGE}")
-                    // dockerImage.inside {
-                    //     sh 'npm install'  
-                    // }
-                }
-            }
-        }
-        stage('Run Tests') {
-            steps {
-                script {
-                    def dockerImage = docker.image("${DOCKER_IMAGE}")
-                    dockerImage.inside {
-                        sh 'npm test'  // Example command to run tests inside the Docker container
-                    }
-                }
-            }
-        }
-        stage('Push Docker Image') {
-            steps {
-                script {
-                    def dockerCmd = isUnix() ? 'docker' : 'docker.exe'
-                    docker.withRegistry('https://registry.example.com', 'docker-hub-config') {
-                        def dockerImage = docker.image("${DOCKER_IMAGE}")
-                        dockerImage.push()
+                    // Build and push Docker image
+                    docker.withRegistry('', registryCredential) {
+                        def image = docker.build("hixej84931fna6/nodejs_exp")
+                        image.push()
                     }
                 }
             }
         }
     }
+    post {
+        always {
+            echo 'One way or another, I have finished'
+            deleteDir() /* clean up our workspace */
+        }
+        success {
+            echo 'Build and push succeeded!'
+        }
+        unstable {
+            echo 'Build or push was unstable :/'
+        }
+        failure {
+            echo 'Build or push failed :('
+        }
+        changed {
+            echo 'Things were different before...'
+        }
+    }
 }
+
