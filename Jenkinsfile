@@ -210,7 +210,7 @@ pipeline {
             steps {
                 script {
                     def dockerCmd = isUnix() ? 'docker' : 'docker.exe'
-                    docker.withRegistry('https://hub.docker.com', 'registryCredential') {
+                    docker.withRegistry('https://registry.hub.docker.com', 'registryCredential') {
                         def dockerImage = docker.image("${DOCKER_IMAGE}")
                         dockerImage.push()
                     }
