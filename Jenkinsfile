@@ -2,11 +2,9 @@ pipeline {
     agent any
     
     environment {
-        // Define environment variables if needed
         DOCKER_HUB_CREDENTIALS = credentials('hixej84931fna6') // Jenkins credentials ID for Docker Hub
-        KUBE_CONFIG = credentials('kube-config-id') // Jenkins credentials ID for Kubernetes config file
+        // KUBE_CONFIG = credentials('kube-config-id') // Uncomment if you need Kubernetes credentials
         IMAGE_TAG = "latest" // You can use a dynamic tag based on git commit hash, etc.
-        APP_NAME = "nodejs_exp" 
     }
     
     stages {
@@ -22,16 +20,16 @@ pipeline {
         
         stage('Dockerize and Push to Docker Hub') {
             steps {
-                // Build Docker image using Dockerfile in your project
                 script {
-                    docker.build("nodejs_exp:${IMAGE_TAG}")
-                }
-                
-                // Authenticate with Docker Hub
-                withCredentials([[$class: 'UsernamePasswordMultiBinding', credentialsId: 'DOCKER_HUB_CREDENTIALS', usernameVariable: 'DOCKER_USERNAME', passwordVariable: 'DOCKER_PASSWORD']]) {
-                    docker.withRegistry('https://hub.docker.com/repository/docker/hixej84931fna6/nodejs_exp/general', 'hixej84931fna6') {
-                        // Push the Docker image to Docker Hub
-                        docker.image("nodejs_exp:${IMAGE_TAG}").push()
+                    // Build Docker image using Dockerfile in your project
+                    docker.build("hixej84931fna6/nodejs_exp:${IMAGE_TAG}")
+                    
+                    // Authenticate with Docker Hub
+                    withCredentials([[$class: 'UsernamePasswordMultiBinding', credentialsId: 'DOCKER_HUB_CREDENTIALS', usernameVariable: 'DOCKER_USERNAME', passwordVariable: 'DOCKER_PASSWORD']]) {
+                        docker.withRegistry('https://hub.docker.com', 'DOCKER_HUB_CREDENTIALS') {
+                            // Push the Docker image to Docker Hub
+                            docker.image("hixej84931fna6/nodejs_exp:${IMAGE_TAG}").push()
+                        }
                     }
                 }
             }
