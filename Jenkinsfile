@@ -29,7 +29,7 @@ pipeline {
                 
                 // Authenticate with Docker Hub
                 withCredentials([[$class: 'UsernamePasswordMultiBinding', credentialsId: 'DOCKER_HUB_CREDENTIALS', usernameVariable: 'DOCKER_USERNAME', passwordVariable: 'DOCKER_PASSWORD']]) {
-                    docker.withRegistry('https://registry.hub.docker.com', 'hixej84931fna6') {
+                    docker.withRegistry('https://hub.docker.com/repository/docker/hixej84931fna6/nodejs_exp/general', 'hixej84931fna6') {
                         // Push the Docker image to Docker Hub
                         docker.image("nodejs_exp:${IMAGE_TAG}").push()
                     }
