@@ -103,35 +103,32 @@ pipeline {
     agent any
 
     environment {
-        IMAGE_TAG = "latest"
-        DOCKER_HUB_CREDENTIALS = credentials('docker-hub-config') // Jenkins credentials ID for Docker Hub
+        imagename = "hixej84931fna6/nodejs_exp"
+        dockerImage = ""
+        registryCredential = credentials('docker-hub-config')
     }
 
-    
-    stages {
-        stage('checkout scm') {
-            steps {
-                checkout scm
-                echo 'Running checkout scm'
-            }
+  stages {
+    stage('Cloning Repo') {
+      steps {
+        git branch:'main',url: 'https://github.com/SKaushik07/CI-CDEXP.git'
+      }
+    }
+    stage('Building Image') {
+      steps{
+        script {
+          dockerImage = docker.build imagename
         }
-        
-        stage('Build image') {
-            steps {
-                git 'https://github.com/SKaushik07/CI-CDEXP.git'
-                sh 'npm install'
-                // Build Docker image
-                echo 'Running Build image'
-            }
+      }
+    }
+    stage('Pushing Image') {
+      steps{
+        script {
+          docker.withRegistry( '', registryCredential ) {
+            dockerImage.push("latest")
+          }
         }
-        
-        stage('Stage 3') {
-            steps {
-                docker.withRegistry('https://hub.docker.com', 'DOCKER_HUB_CREDENTIALS') {
-                docker.build("hixej84931fna6/nodejs_exp:${IMAGE_TAG}")
-                echo 'Running Stage 3'
-            }
-        }
+      }
     }
     
     // post {
