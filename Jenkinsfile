@@ -150,9 +150,7 @@
 
 
 pipeline {
-    agent {
-        label 'macOS'  
-    }
+    agent any
     environment {
         DOCKER_IMAGE = 'hixej84931fna6/nodejs_exp:latest'  // Update with your Docker image name
     }
