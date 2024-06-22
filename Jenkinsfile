@@ -38,12 +38,14 @@ pipeline {
                 script {
                     sh """
                     export KUBECONFIG=$KUBECONFIG
-                    kubectl apply -f ./deployment.yaml --namespace nodejs-exp --validate=false
-                    kubectl get svc --namespace nodejs-exp
+                    kubectl apply -f ./deployment.yaml --namespace ${env.NAMESPACE} --validate=false
+                    kubectl get svc --namespace ${env.NAMESPACE}
                     """
                 }
             }
         }
     }
 }
-// ${env}
+
+// kubectl apply -f ./deployment.yaml --namespace ${env} --validate=false
+// kubectl get svc --namespace nodejs-exp
