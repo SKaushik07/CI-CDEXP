@@ -16,7 +16,7 @@ spec:
         - name: nodejs
           image: hixej84931fna6/nodejs_exp:latest
           ports:
-            - containerPort: 3000  # Adjust the port if your Node.js app listens on a different port
+            - containerPort: 3000 
 
 ---
 apiVersion: v1
