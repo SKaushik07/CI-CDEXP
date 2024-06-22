@@ -37,6 +37,7 @@ pipeline {
             steps {
                 script {
                     sh """
+                    echo "Namespace: ${env.NAMESPACE}"
                     export KUBECONFIG=$KUBECONFIG
                     kubectl apply -f ./deployment.yaml --namespace ${env.NAMESPACE} --validate=false
                     kubectl get svc --namespace ${env.NAMESPACE}
