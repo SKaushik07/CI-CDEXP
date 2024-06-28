@@ -37,15 +37,15 @@ pipeline {
             steps {
                 script {
                     sh """
-                    export KUBECONFIG=$KUBECONFIG
                     kubectl apply -f ./deployment.yaml --namespace nodejs-exp --validate=false
-                    kubectl get svc --namespace ${env.NAMESPACE}
+                    kubectl get svc --namespace nodejs-exp
                     """
                 }
             }
         }
     }
 }
+                    // kubectl get svc --namespace ${env.NAMESPACE}
                     // echo "Namespace: ${env.NAMESPACE}"
 
 // kubectl apply -f ./deployment.yaml --namespace ${env} --validate=false
