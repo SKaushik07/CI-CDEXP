@@ -1,12 +1,12 @@
 pipeline {
     agent any
     environment {
-        // DOCKER_IMAGE = 'hixej84931fna6/nodejs_exp:latest'
+        DOCKER_IMAGE = 'hixej84931fna6/nodejs_exp:latest'
         registryCredential = credentials('docker-hub-config')
         KUBECONFIG = credentials('kubeconfig-credential')
 
-        DOCKER_IMAGE_BASE = 'hixej84931fna6/nodejs_exp'
-        DOCKER_IMAGE_VERSION = "${DOCKER_IMAGE_BASE}:${BUILD_NUMBER}"
+        // DOCKER_IMAGE_BASE = 'hixej84931fna6/nodejs_exp'
+        // DOCKER_IMAGE_VERSION = "${DOCKER_IMAGE_BASE}:${BUILD_NUMBER}"
     }
     stages {
         stage('Checkout') {
@@ -37,9 +37,8 @@ pipeline {
             steps {
                 script {
                     sh """
-                    echo "Namespace: ${env.NAMESPACE}"
                     export KUBECONFIG=$KUBECONFIG
-                    kubectl apply -f ./deployment.yaml --namespace ${env.NAMESPACE} --validate=false
+                    kubectl apply -f ./deployment.yaml --namespace nodejs-exp --validate=false
                     kubectl get svc --namespace ${env.NAMESPACE}
                     """
                 }
@@ -47,6 +46,7 @@ pipeline {
         }
     }
 }
+                    // echo "Namespace: ${env.NAMESPACE}"
 
 // kubectl apply -f ./deployment.yaml --namespace ${env} --validate=false
 // kubectl get svc --namespace nodejs-exp
